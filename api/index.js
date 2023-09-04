@@ -2,24 +2,22 @@ const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const _ = require("lodash");
-const { EmbedBuilder, WebhookClient } = require("discord.js");
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/:param1/:param2/:param3/:param4", async (req, res) => {
+app.get("/api/:param1/:param2/:param3/:param4?/:param5?", async (req, res) => {
   try {
-    webhook(req);
-
-    const param1 = req.params.param1;
-    const param2 = req.params.param2;
-    const param3 = req.params.param3;
-    const param4 = req.params.param4;
+    const param1 = req.params.param1 || undefined;
+    const param2 = req.params.param2 || undefined;
+    const param3 = req.params.param3 || undefined;
+    const param4 = req.params.param4 || undefined;
+    const param5 = req.params.param5 || undefined;
 if (param1 === "pikanetwork") {
     if (param2 === "punishments") {
       const data = await scrapePunishmentsData(
-        `https://pika-network.net/bans/search/${player}`,
+        `https://pika-network.net/bans/search/${param3}`,
         "getPunishments",
         null
       );
@@ -27,7 +25,7 @@ if (param1 === "pikanetwork") {
     }
     else if (param2 == "globalPunishments") {
         const data = await scrapePunishmentsData(
-            `https://pika-network.net/bans/${param3}/page/${param4}`,
+            `https://pika-network.net/bans/${param3}/page/${param4 || 1}`,
             "getAllPunishments",
             param3
           );
@@ -89,32 +87,5 @@ async function scrapePunishmentsData(url, functionName, filterParam) {
   }
 }
 
-async function webhook(req) {
-    try {
-      const { method, originalUrl, headers, body, query, params } = req;
-      const timestamp = `<t:${Math.floor(Date.now() / 1000)}:F>`;
-      const webhookClient = new WebhookClient({
-        url: "https://discord.com/api/webhooks/1148139003527319673/KNUtk03KVbDlA6Oh-yQQ74nrxRTnn0zWFV4hHfVxGYll4TPd2KZurOVNbyBktgvAtlND",
-      });
-      const embed = new EmbedBuilder()
-        .setTitle("API Request")
-        .setColor("#3498db")
-        .setDescription("Here are the details of an incoming request:")
-        .addFields(
-          { name: "Method", value: method },
-          { name: "URL", value: originalUrl },
-          { name: "Headers", value: JSON.stringify(headers) },
-          { name: "Body", value: JSON.stringify(body) },
-          { name: "Query", value: JSON.stringify(query) },
-          { name: "Params", value: JSON.stringify(params) },
-          { name: "Timestamp", value: timestamp }
-        );
-      await webhookClient.send({ embeds: [embed] });
-    } catch (error) {
-      throw error;
-    }
-  }
 
-app.listen(80, () => {
-  console.log(`The API has been initiated on port 80.`);
-});
+module.exports = app;
