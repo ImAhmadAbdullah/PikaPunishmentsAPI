@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm add -g pnpm && pnpm install && node ."
+    "build": "pnpm add -g pnpm && pnpm install && node ."
   },
   "keywords": [],
   "author": "",
